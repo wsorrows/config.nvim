@@ -38,21 +38,29 @@ M.setup_lsp = function(attach, capabilities)
     on_attach = attach,
     capabilities = capabilities,
   }
-   -- lspservers with default config
 
-   local servers = { "pyright" }
-
-   for _, lsp in ipairs(servers) do
-      lspconfig[lsp].setup {
-         on_attach = attach,
-         capabilities = capabilities,
-         flags = {
-            debounce_text_changes = 150,
-         },
-      }
-   end
+  lspconfig.pyright.setup {
+    cmd = { "pyright-langserver", "--stdio" },
+    filetypes = { "python" },
+    root_dir = util.root_pattern(".git", "pyproject.toml", "pyrightconfig.json"),
+    single_file_support = true,
+    settings = {
+      python = {
+        analysis = {
+          autoSearchPaths = false,
+          useLibraryCodeForTypes = false,
+          diagnosticMode = 'openFilesOnly',
+        },
+      },
+    },
+    on_attach = attach,
+    capabilities = capabilities,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
+end
    
    -- typescript
-end
 
 return M
